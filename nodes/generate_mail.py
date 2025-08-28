@@ -19,7 +19,7 @@ def generate_mail_with_llm(state):
     
     cv_text = """
     NIKHIL GUPTA
-    Deoria, UP | gptnikhill@gmail.com | +918948100690 | LinkedIn | GitHub | LeetCode | Portfolio
+    Deoria, UP | gptnikhill@gmail.com | +918948100690 | LinkedIn | GitHub | LeetCode | Portfolio: https://nikhil-portfolio-umber-ten.vercel.app/
     Career Snapshot
     Aspiring AI & Data Science Engineer and CSE undergraduate at IIIT Tiruchirappalli, seeking opportunities to leverage Generative AI, Agentic AI,
     Machine Learning, Data Science, computer vision, NLP, and LLMs to build intelligent, data-driven solutions that solve complex real-world

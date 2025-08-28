@@ -33,11 +33,9 @@ async def process_reel(url, theme, update: Update, context: ContextTypes.DEFAULT
     state.IG_PASSWORD = os.getenv("IG_PASSWORD")
     state.IG_2FA_SECRET = os.getenv("IG_2FA_SECRET")
     
-    # Determine how to send the reply based on the update type
-    # If the update is from a button press, use the callback query's methods.
-    # Otherwise, use the original message.
-    message_object = update.effective_message if update.effective_message else update.message
-    await message_object.reply_text("⏳ Downloading reel and generating caption...")
+    # We remove this duplicate message to prevent sending it twice.
+    # The message is already sent from the bot_node.py file.
+    # await update.message.reply_text("⏳ Downloading reel and generating caption...")
 
     try:
         # Step 1: Download Reel
@@ -71,10 +69,10 @@ async def process_reel(url, theme, update: Update, context: ContextTypes.DEFAULT
             f"Looks good? Choose an option:"
         )
 
-        await message_object.reply_text(message_text, reply_markup=reply_markup)
+        await update.message.reply_text(message_text, reply_markup=reply_markup)
         
     except Exception as e:
-        await message_object.reply_text(f"⚠️ Failed to process reel: {e}")
+        await update.message.reply_text(f"⚠️ Failed to process reel: {e}")
 
 async def confirm_post_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
@@ -95,13 +93,9 @@ async def confirm_post_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     state.IG_2FA_SECRET = os.getenv("IG_2FA_SECRET")
     
     try:
-        # Step 3: Login to Instagram
         instagram_login(state)
-        
-        # Step 4: Post the Reel
         state = post_reel(state)
         
-        # Log the successful post
         log_entry = {
             "timestamp": datetime.now().isoformat(),
             "user_id": query.from_user.id,
@@ -120,7 +114,6 @@ async def confirm_post_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(f"✅ Reel posted successfully!\nCaption:\n{state.caption}")
         
     except Exception as e:
-        # Log the failure
         log_entry = {
             "timestamp": datetime.now().isoformat(),
             "user_id": query.from_user.id,
@@ -139,7 +132,6 @@ async def confirm_post_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(f"⚠️ Failed to post reel: {e}")
         
     finally:
-        # File cleanup is now guaranteed to run
         if pending and "file_path" in pending:
             try:
                 os.remove(pending["file_path"])
@@ -160,7 +152,6 @@ async def cancel_post_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if pending and "file_path" in pending:
         try:
-            # Log the cancellation
             log_entry = {
                 "timestamp": datetime.now().isoformat(),
                 "user_id": query.from_user.id,
@@ -184,7 +175,7 @@ async def cancel_post_reel(update: Update, context: ContextTypes.DEFAULT_TYPE):
             print(f"Error deleting files: {e}")
             
     context.user_data.pop("pending_reel", None)
-    await query.edit_message_text("❌ Post cancelled. Files deleted.")
+    await query.message.reply_text("❌ Post cancelled. Files deleted.")
 
 
 async def process_email(company_email, company_description, designation, update: Update, context: ContextTypes.DEFAULT_TYPE):

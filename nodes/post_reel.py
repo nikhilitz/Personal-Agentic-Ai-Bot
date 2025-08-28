@@ -1,4 +1,3 @@
-# /Users/nikhilgupta/Desktop/Mem0nic/nodes/post_reel.py
 import os
 import subprocess
 from instagrapi import Client
@@ -14,20 +13,12 @@ def post_reel(state):
     if not hasattr(state, "caption") or not state.caption:
         print("⚠️ No caption available to post.")
         return state
+        
+    # Check if the client is already logged in
+    if not hasattr(state, "client") or not state.client:
+        raise Exception("Instagram client not found in state. Login failed.")
 
     try:
-        cl = Client()
-        session_file = "ig_session.json"
-
-        # Load or login
-        if os.path.exists(session_file):
-            cl.load_settings(session_file)
-            print("✅ Loaded existing Instagram session.")
-        else:
-            cl.login(username=state.IG_USERNAME, password=state.IG_PASSWORD)
-            cl.dump_settings(session_file)
-            print("✅ Logged in and saved new session.")
-
         media_path = state.reel_file_path
         caption_text = state.caption.strip()
 
@@ -44,11 +35,12 @@ def post_reel(state):
                 thumbnail_path
             ], check=True)
 
-        # Upload in high quality (instagrapi auto handles IG compression)
-        cl.video_upload(path=media_path, caption=caption_text, thumbnail=thumbnail_path)
+        # Use the client object passed through the state
+        state.client.video_upload(path=media_path, caption=caption_text, thumbnail=thumbnail_path)
         print("✅ Reel posted successfully!")
 
     except Exception as e:
         print(f"⚠️ Reel upload failed: {e}")
+        # The `login_required` message is handled by instagram_login.py now
 
     return state

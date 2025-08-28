@@ -33,7 +33,6 @@ def download_reel(state):
             "key": "FFmpegVideoConvertor",
             "preferedformat": "mp4"
         }],
-        "ffmpeg_location": "/opt/homebrew/bin/ffmpeg", # Specify your FFmpeg path here
         "merge_output_format": "mp4",
         "overwrites": True
     }

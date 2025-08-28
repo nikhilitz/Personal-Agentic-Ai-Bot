@@ -18,3 +18,4 @@ post_log.encrypted
 # Downloaded reels and temporary files
 reels/
 videos/
+approved_users.json
