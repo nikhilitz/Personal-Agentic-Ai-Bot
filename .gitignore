@@ -1,0 +1,20 @@
+# Python-specific files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+venv_llm/
+
+# Environment file
+.env
+
+# Bot-specific data and session files
+ig_session.json
+ig_session.encrypted
+post_log.json
+post_log.encrypted
+
+# Downloaded reels and temporary files
+reels/
+videos/
