@@ -1,4 +1,3 @@
-# /Users/nikhilgupta/Desktop/Mem0nic/nodes/bot_node.py
 import os
 import asyncio
 from datetime import datetime, timedelta, time
@@ -33,7 +32,8 @@ class TelegramBotNode:
         self.user_pending_action = {}
         self.user_pending_key_phrase = {}
         
-        self.app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+        # FIX: Added a timeout to prevent re-processing of updates
+        self.app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).read_timeout(60).connect_timeout(60).build()
         self.app.add_handler(CommandHandler("start", self.start))
         self.app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
         self.app.add_handler(CallbackQueryHandler(self.button_handler))
