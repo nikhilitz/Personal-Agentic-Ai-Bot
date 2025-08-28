@@ -33,10 +33,6 @@ async def process_reel(url, theme, update: Update, context: ContextTypes.DEFAULT
     state.IG_PASSWORD = os.getenv("IG_PASSWORD")
     state.IG_2FA_SECRET = os.getenv("IG_2FA_SECRET")
     
-    # We remove this duplicate message to prevent sending it twice.
-    # The message is already sent from the bot_node.py file.
-    # await update.message.reply_text("⏳ Downloading reel and generating caption...")
-
     try:
         # Step 1: Download Reel
         state = download_reel(state)
@@ -246,8 +242,14 @@ async def confirm_send_mail(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == "__main__":
     from nodes.bot_node import TelegramBotNode
-    bot_node = TelegramBotNode(
-        reel_controller_callback=process_reel,
-        email_controller_callback=process_email
-    )
-    bot_node.run()
+    # Wrap the run() call in a loop with an error handler
+    while True:
+        try:
+            bot_node = TelegramBotNode(
+                reel_controller_callback=process_reel,
+                email_controller_callback=process_email
+            )
+            bot_node.run()
+        except Exception as e:
+            print(f"⚠️ Bot crashed with an error: {e}. Restarting...")
+            asyncio.sleep(5) # Wait for 5 seconds before restarting
